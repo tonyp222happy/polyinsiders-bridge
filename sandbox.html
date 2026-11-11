@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>SANDBOX_TEST</title></head>
+<body>
+<iframe id="f" sandbox="allow-scripts" style="display:none"></iframe>
+<script>
+const f = document.getElementById('f');
+f.srcdoc = `<script>
+(async () => {
+  try {
+    const r = await fetch('https://api.polyinsiders.com/api/leaderboard/leaderboard?limit=5&daysBack=30&sortBy=totalPnl&minTrades=5');
+    const t = await r.text();
+    document.title = 'RESULT:' + r.status + ':' + t.slice(0, 800);
+  } catch (e) {
+    document.title = 'ERR:' + String(e);
+  }
+})();
+<\/script>`;
+setTimeout(() => { document.title = 'TIMEOUT_NO_RESULT'; }, 20000);
+</script>
+</body>
+</html>
