@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>SANDBOX_TEST2</title></head>
+<body>
+<iframe id="f" sandbox="allow-scripts" style="display:none"></iframe>
+<div id="status">waiting...</div>
+<script>
+window.addEventListener('message', (ev) => {
+  const d = document.createElement('div');
+  d.id = 'RESULT';
+  d.textContent = 'RESULT:' + ev.data;
+  document.body.appendChild(d);
+  document.getElementById('status').textContent = 'got message';
+});
+const f = document.getElementById('f');
+f.srcdoc = `<script>
+(async () => {
+  try {
+    const r = await fetch('https://api.polyinsiders.com/api/leaderboard/leaderboard?limit=5&daysBack=30&sortBy=totalPnl&minTrades=5');
+    const t = await r.text();
+    parent.postMessage('OK ' + r.status + ' ' + t.slice(0, 1000), '*');
+  } catch (e) {
+    parent.postMessage('ERR ' + String(e), '*');
+  }
+})();
+<\/script>`;
+setTimeout(() => {
+  const d = document.createElement('div');
+  d.id = 'RESULT';
+  d.textContent = 'RESULT:TIMEOUT_NO_MESSAGE';
+  document.body.appendChild(d);
+}, 25000);
+</script>
+</body>
+</html>
